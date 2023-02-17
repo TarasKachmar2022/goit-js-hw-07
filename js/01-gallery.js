@@ -5,7 +5,7 @@ const refs = {
     galleryEl: document.querySelector('.gallery')
 }
 
-refs.galleryEl.addEventListener('click', onGalleryCardClick);
+refs.galleryEl.addEventListener('click', onOpenModal);
 
 const gallaryCardsMarkup = createGallaryCardsMarkup(galleryItems);
 refs.galleryEl.innerHTML = gallaryCardsMarkup;
@@ -25,22 +25,24 @@ function createGallaryCardsMarkup(items){
 }).join('');
 }
 
-function onGalleryCardClick(event){
+function onOpenModal(event){
     event.preventDefault();
     const source = event.target.dataset.source;
     
     if(event.target.classList.contains('gallery__image')){
-        document.addEventListener('keydown', onKeyModalClose);
-
+        window.addEventListener('keydown', onKeyModalClose);
+        
         const instance = basicLightbox.create(`
         <img src="${source}" width="1280" height="852">
         `)
         instance.show();
-
-        function onKeyModalClose(event){
-            if(event.code === 'Escape'){
-                instance.close()
+        
+        function onKeyModalClose(event){ 
+            if(event.code !== 'Escape'){
+                return;
             }
+            instance.close();
+            window.removeEventListener('keydown', onKeyModalClose);
         }
     }
     }
